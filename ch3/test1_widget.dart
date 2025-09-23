@@ -70,6 +70,8 @@ class MyStatefulWidget extends StatefulWidget {
     return MyState();
   }
 }
+
+
 class MyState extends State<MyStatefulWidget> {
   bool favorited = false;
   int favoritedCount = 10;
