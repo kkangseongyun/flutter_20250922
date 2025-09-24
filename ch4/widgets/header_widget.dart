@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 //overflow menu를 구성하기 위한 문자열..
 const List<String> choices = [
@@ -9,7 +10,15 @@ class HeaderWidget extends StatelessWidget{
 
   //메뉴 클릭 이벤트 콜백...
   void select(String choice){
-
+    Fluttertoast.showToast(
+      msg: choice,
+      //아래 설정은 플랫폼에 따라 적용되지 않을 수도 있다..
+      toastLength: Toast.LENGTH_SHORT,//사라지는 시간..
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0
+    );
   }
 
   @override
@@ -17,7 +26,11 @@ class HeaderWidget extends StatelessWidget{
     return Row(
       children: [
         Image.asset("images/lab_instagram_icon_0.jpg"),
-        Text("instagram"),
+        Container(
+          padding: EdgeInsets.only(left: 16),
+          child: Text("instagram", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+        ),
+        Spacer(),
         PopupMenuButton<String>(
           onSelected: select,
           itemBuilder: (context){//메뉴 구성을 위해서 자동 호출...
