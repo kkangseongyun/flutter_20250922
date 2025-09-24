@@ -37,6 +37,7 @@ dependencies:
   provider: ^6.1.2
   fluttertoast: ^8.2.4
   smooth_page_indicator: ^1.1.0
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,8 @@ flutter:
   # 서브 디렉토리는 포함되지 않는다..
   assets:
     - images/
+    - assets/text/
+    - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
