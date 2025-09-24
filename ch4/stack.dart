@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 void main() => runApp(MyApp());
 
@@ -87,6 +88,53 @@ class CardADWidget extends StatelessWidget {
   }
 }
 
+class MyWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return MyWidgetState();
+  }
+}
+
+class MyWidgetState extends State<MyWidget> {
+  List<CardADWidget> makeWidgets(){
+    return datas.map((vo){
+      return CardADWidget(vo);
+    }).toList();
+  }
+  //손가락 따라가면서 화면을 순차적으로 보이는 위젯..PageView..의 제어자..
+  PageController controller = PageController(
+    initialPage: 0,
+    //한장의 화면이 어느정도로 보일것인가? 1.0이면 현재 화면만 보인다.. 0.9 이면 90%로 보이고 나머지
+      //10%에 인접 화면이 같이 나온다..
+    viewportFraction: 0.9
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: PageView(
+            controller: controller,
+            children: makeWidgets(),
+          ),
+        ),
+        SmoothPageIndicator(
+          controller: controller,//PageView에 연결된 controller를 그대로 지정..
+          //PageView에서 화면 조정이 되면.. 그 정보가 controller내에서 유지. .
+          //controller 내의 페이지 정보로 indicator 조정..
+          count: 5,
+          effect: WormEffect(
+            dotColor: Colors.white,
+            activeDotColor: Colors.indigo,
+          ),
+        ),
+        SizedBox(height: 32.0,)//지정한 사이즈만 확보하는 위젯..
+      ],
+    );
+  }
+}
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -96,7 +144,10 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Layout Test'),
         ),
-        body:
+        body: Container(
+          color: Colors.pink,
+          child: MyWidget(),
+        )
       ),
     );
   }
