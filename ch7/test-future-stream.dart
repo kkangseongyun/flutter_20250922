@@ -73,7 +73,21 @@ Future<List<Article>> getServerData(String page) async {
 }
 
 class FutureWidget extends StatelessWidget {
-
+  //서버 연동시키고.. 결과로 발행되는 Future데이터로 화면 구성하는 위젯..
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: getServerData("1"),
+        builder: (context, snapshot){
+          if(snapshot.hasData){
+            return getWidget(snapshot.data ?? []);
+          }else if(snapshot.hasError){
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();//최초.. 빙빙빙..
+        }
+    );
+  }
 
 }
 
@@ -86,6 +100,51 @@ class StreamWidget extends StatefulWidget {
 class StreamState extends State<StreamWidget> {
   List<Article> list = [];
 
+  //StreamController 내에 stream 이 하나 내장되어 있다..
+  //여러 stream 을 하나의 stream 으로 통합해서 발행이 가능..
+  //stream 이 아닌 일반 데이터를 stream 발행 가능..
+  //broadcast 방식이 가능하다..
+  StreamController<List<Article>> streamController = StreamController();
+
+  //반복 실행시킬.. 서버 데이터를 획득하기 위한 함수..
+  void getData(int i) async {
+    int page = ++i;
+    await getServerData(page.toString())
+      .then((data){
+        streamController.add(data);
+    });
+  }
+
+  periodicStream() async {
+    Duration duration = Duration(seconds: 5);
+    Stream stream = Stream.periodic(duration, getData);
+    stream = stream.take(5);
+    stream.listen((event){
+      print("서버요청...");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    periodicStream();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: streamController.stream,
+        builder: (context, AsyncSnapshot snapshot){
+          if(snapshot.hasData){
+            list.addAll(snapshot.data);
+            return getWidget(list);
+          }else if(snapshot.hasError){
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        }
+    );
+  }
 
 }
 
